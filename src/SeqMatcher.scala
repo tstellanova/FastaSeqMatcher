@@ -39,6 +39,22 @@ object SeqMatcher {
   }
 
   /**
+    * Dump the queue of (name,sequence) as a "flattened" FASTA file,
+    * where each sentence is on a single line
+    * @param q
+    * @param filePath
+    */
+  def dumpAsFlattenedFasta(q:Queue[(String, String)], filePath: String) = {
+    val pw = new PrintWriter(new File(filePath))
+    while (q.nonEmpty) {
+      val curNode = q.dequeue()
+      pw.println(">" + curNode._1)
+      pw.println(curNode._2)
+    }
+    pw.close
+  }
+
+  /**
     * Compute a Knuth–Morris–Pratt partial match table from a string
     * @see https://en.wikipedia.org/wiki/Knuth–Morris–Pratt_algorithm
     * @param s  The string from which to compute the KMP table
@@ -64,37 +80,6 @@ object SeqMatcher {
     }
     T
   }
-
-
-
-  /*
-  algorithm kmp_search:
-    input:
-  an array of characters, S (the text to be searched)
-  an array of characters, W (the word sought)
-  output:
-    an integer (the zero-based position in S at which W is found)
-
-  define variables:
-    an integer, m ← 0 (the beginning of the current match in S)
-  an integer, i ← 0 (the position of the current character in W)
-  an array of integers, T (the table, computed elsewhere)
-
-  while m + i < length(S) do
-  if W[i] = S[m + i] then
-  if i = length(W) - 1 then
-  return m
-  let i ← i + 1
-  else
-  if T[i] > -1 then
-    let m ← m + i - T[i], i ← T[i]
-  else
-  let m ← m + 1, i ← 0
-
-  (if we reach here, we have searched all of S unsuccessfully)
-  return the length of S
-
-  */
 
   /**
     * Search for needle in the base string, starting from 0 index
@@ -224,25 +209,9 @@ object SeqMatcher {
     base
   }
 
-  /**
-    * Dump the queue of (name,sequence) as a "flattened" FASTA file,
-    * where each sentence is on a single line
-    * @param q
-    * @param filePath
-    */
-  def dumpAsFlattenedFasta(q:Queue[(String, String)], filePath: String) = {
-      val pw = new PrintWriter(new File(filePath))
-      while (q.nonEmpty) {
-        val curNode = q.dequeue()
-        pw.println(">" + curNode._1)
-        pw.println(curNode._2)
-      }
-      pw.close
-  }
+
 
   def main(args: Array[String]) {
-    println("Begin")
-
     var q1 = Queue[(String, String)]()
     var q2 = Queue[(String, String)]()
     //read all the sequences from file.
